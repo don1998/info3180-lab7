@@ -9,6 +9,9 @@ from app import app
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from forms import UploadForm
 import os, json
+from werkzeug.datastructures import CombinedMultiDict
+
+from werkzeug.utils import secure_filename
 
 
 
@@ -26,12 +29,12 @@ def index():
 @app.route('/api/upload', methods=['POST'])
 def upload():
     error_list=[]
-    form = UploadForm()
+    form = UploadForm(CombinedMultiDict((request.files, request.form)))
     if form.validate_on_submit():
-        photograph = form.photo.data
         desc = form.description.data
         file = request.files['file']
-        photograph.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
         json_list = {}
         json_list['message'] = "File Upload Successful"
         json_list['filename'] = file.filename
