@@ -29,7 +29,7 @@ def index():
 @app.route('/api/upload', methods=['POST'])
 def upload():
     error_list=[]
-    form = UploadForm(CombinedMultiDict((request.files, request.form)))
+    form = UploadForm()
     if form.validate_on_submit():
         desc = form.description.data
         file = request.files['file']
